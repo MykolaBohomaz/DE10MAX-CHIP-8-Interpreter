@@ -1,0 +1,36 @@
+// Chip8 preloaded font - starting at 0x50. apparently its popular to start at 0x50 and not 0x00
+@050
+F0 90 90 90 F0  // 0
+20 60 20 20 70  // 1
+F0 10 F0 80 F0  // 2
+F0 10 F0 10 F0  // 3
+90 90 F0 10 10  // 4
+F0 80 F0 10 F0  // 5
+F0 80 F0 90 F0  // 6
+F0 10 20 40 40  // 7
+F0 90 F0 90 F0  // 8
+F0 90 F0 10 F0  // 9
+F0 90 F0 90 90  // A
+E0 90 E0 90 E0  // B
+F0 80 80 80 F0  // C
+E0 90 90 90 E0  // D
+F0 80 F0 80 F0  // E
+F0 80 F0 80 80  // F
+
+// Test program - draw "0123" using the font
+@200
+00 E0   // 200: clear screen
+60 0A   // 202: V0 = 10 (x)
+61 0C   // 204: V1 = 12 (y)
+A0 50   // 206: I = 0x050 (font "0")
+D0 15   // 208: draw 5 rows at (V0, V1)
+70 05   // 20A: V0 += 5
+A0 55   // 20C: I = 0x055 (font "1")
+D0 15   // 20E: draw
+70 05   // 210: V0 += 5
+A0 5A   // 212: I = 0x05A (font "2")
+D0 15   // 214: draw
+70 05   // 216: V0 += 5
+A0 5F   // 218: I = 0x05F (font "3")
+D0 15   // 21A: draw
+12 1C   // 21C: jump to 21C (stop here forever)
