@@ -1,18 +1,3 @@
-// =============================================================================
-// fb_mem_tb.v - self-checking testbench for fb_mem (2048 x 1 bit, dual port)
-//
-// Run from the repo root:   make sim-fb
-// (same as: iverilog -g2005 -Wall -o sim/fb_mem_tb.vvp sim/fb_mem_tb.v rtl/mem/fb_mem.v
-//           vvp sim/fb_mem_tb.vvp)
-// Wave:  surfer sim/fb_mem_tb.vcd
-//
-// Timing rule used everywhere in this file:
-//   - the testbench CHANGES inputs on the FALLING edge of clk
-//   - fb_mem reacts on the RISING edge
-//   - the testbench CHECKS outputs on the next FALLING edge
-// Driving and checking half a cycle away from the rising edge avoids races
-// where the testbench and the design both act "at the same instant".
-// =============================================================================
 `timescale 1ns/1ps
 `default_nettype none
 
