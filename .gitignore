@@ -1,0 +1,11 @@
+*.vvp
+*.vcd
+*.fst
+
+quartus/db/
+quartus/incremental_db/
+quartus/output_files/
+quartus/simulation/
+
+.DS_Store
+*.swp
