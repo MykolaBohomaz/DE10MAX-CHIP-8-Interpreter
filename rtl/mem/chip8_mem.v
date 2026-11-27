@@ -9,7 +9,7 @@ module chip8_mem (
 
     reg [7:0] mem [0:4095]; // 4k memory for chip 8
 
-    initial $readmemh("../../mem/rom.hex", mem);
+    initial $readmemh("mem/rom.hex", mem);
 
     always @(posedge clk) begin
         if (write_en)

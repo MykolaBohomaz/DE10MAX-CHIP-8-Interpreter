@@ -11,3 +11,4 @@ quartus/simulation/
 *.swp
 
 cu_tb
+cpu_tb
