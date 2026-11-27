@@ -9,3 +9,5 @@ quartus/simulation/
 
 .DS_Store
 *.swp
+
+cu_tb
