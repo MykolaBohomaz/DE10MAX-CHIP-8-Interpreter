@@ -7,7 +7,7 @@ module control_unit(
     output reg mem_addr_sel,
     output reg ir_hi_ld,
     output reg ir_lo_ld,
-    output reg pc_incr
+    output reg pc_sel
 );
 
     localparam IDLE =    4'b0000;
@@ -20,7 +20,7 @@ module control_unit(
         mem_addr_sel = 1'b0;
         ir_hi_ld =     1'b0;
         ir_lo_ld =     1'b0;
-        pc_incr =      1'b0;
+        pc_sel =      1'b0;
 
         case (state)
             IDLE: ;                          // no control signals asserted, default values are already set
@@ -31,7 +31,7 @@ module control_unit(
             end
             FETCH3: begin
                 ir_lo_ld =     1'b1;
-                pc_incr =      1'b1;
+                pc_sel =      1'b1;
             end
             EXECUTE: ;                      // no control signals asserted, default values are already set
         endcase

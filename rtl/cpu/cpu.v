@@ -13,7 +13,7 @@ module cpu(
     wire mem_addr_sel;
     wire ir_hi_ld;
     wire ir_lo_ld;
-    wire pc_incr;
+    wire pc_sel;
 
     control_unit cu (
         .clk(clk),
@@ -23,7 +23,7 @@ module cpu(
         .mem_addr_sel(mem_addr_sel),
         .ir_hi_ld(ir_hi_ld),
         .ir_lo_ld(ir_lo_ld),
-        .pc_incr(pc_incr)
+        .pc_sel(pc_sel)
     );
 
     assign mem_addr = (mem_addr_sel) ? pc + 12'd1 : pc;
@@ -33,7 +33,7 @@ module cpu(
             pc <= 12'h200;                       // start of program memory NOT 0!
             ir <= 16'h0000;
         end else begin
-            if (pc_incr) begin
+            if (pc_sel) begin
                 pc <= pc + 12'd2;
             end
             if (ir_hi_ld) begin

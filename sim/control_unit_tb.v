@@ -18,7 +18,7 @@ module control_unit_tb;
     wire mem_addr_sel;
     wire ir_hi_ld;
     wire ir_lo_ld;
-    wire pc_incr;
+    wire pc_sel;
 
     control_unit dut (
         .clk(clk),
@@ -28,7 +28,7 @@ module control_unit_tb;
         .mem_addr_sel(mem_addr_sel),
         .ir_hi_ld(ir_hi_ld),
         .ir_lo_ld(ir_lo_ld),
-        .pc_incr(pc_incr)
+        .pc_sel(pc_sel)
     );
 
     integer errors = 0;
@@ -81,12 +81,12 @@ module control_unit_tb;
                 mem_addr_sel !== exp_sel   ||
                 ir_hi_ld     !== exp_hi    ||
                 ir_lo_ld     !== exp_lo    ||
-                pc_incr      !== exp_pc) begin
+                pc_sel      !== exp_pc) begin
                 errors = errors + 1;
                 $display("  FAIL @ %0t: expected %-7s sel=%b hi=%b lo=%b pc=%b",
                          $time, name(exp_state), exp_sel, exp_hi, exp_lo, exp_pc);
                 $display("                       got %-7s sel=%b hi=%b lo=%b pc=%b",
-                         name(state), mem_addr_sel, ir_hi_ld, ir_lo_ld, pc_incr);
+                         name(state), mem_addr_sel, ir_hi_ld, ir_lo_ld, pc_sel);
             end
         end
     endtask
