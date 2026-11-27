@@ -1,11 +1,13 @@
 `timescale 1ns / 1ps
 
-// this tb currently only test the fetch part of the cpu
+// this tb tests the fetch part of the cpu and the 1NNN jump:
+// the last instruction (121C at 0x21C) jumps to itself, so after #15 the
+// cpu keeps fetching 121C forever instead of running off the program
 
 module cpu_tb;
 
     parameter CLK_PERIOD = 10;
-    parameter N_INSTR    = 15;      // instructions in the 0123 program
+    parameter N_INSTR    = 20;      // 15 instructions of the 0123 program + 5 repeats of the jump
 
     localparam EXECUTE = 4'b0100;   // same code as in control_unit.v
 
@@ -28,6 +30,7 @@ module cpu_tb;
     // expected values, typed by hand from mem/rom.hex
     reg [15:0] exp_ir [0:N_INSTR-1];
     reg [11:0] exp_pc [0:N_INSTR-1];
+    reg [11:0] exp_pc_after [0:N_INSTR-1];   // PC once the instruction has finished (back in IDLE)
 
     // dut and mem
     cpu dut (
@@ -79,6 +82,24 @@ module cpu_tb;
         exp_ir[12] = 16'hA05F;  exp_pc[12] = 12'h21A;  // I = font "3"
         exp_ir[13] = 16'hD015;  exp_pc[13] = 12'h21C;  // draw
         exp_ir[14] = 16'h121C;  exp_pc[14] = 12'h21E;  // jump to self
+
+        // the jump loops - the same instruction is fetched again and again
+        exp_ir[15] = 16'h121C;  exp_pc[15] = 12'h21E;
+        exp_ir[16] = 16'h121C;  exp_pc[16] = 12'h21E;
+        exp_ir[17] = 16'h121C;  exp_pc[17] = 12'h21E;
+        exp_ir[18] = 16'h121C;  exp_pc[18] = 12'h21E;
+        exp_ir[19] = 16'h121C;  exp_pc[19] = 12'h21E;
+
+        // PC after EXECUTE - unchanged for normal instructions...
+        for (k = 0; k < N_INSTR; k = k + 1)
+            exp_pc_after[k] = exp_pc[k];
+        // ...but the jump (121C) loads PC with NNN = 21C in EXECUTE
+        exp_pc_after[14] = 12'h21C;
+        exp_pc_after[15] = 12'h21C;
+        exp_pc_after[16] = 12'h21C;
+        exp_pc_after[17] = 12'h21C;
+        exp_pc_after[18] = 12'h21C;
+        exp_pc_after[19] = 12'h21C;
     end
 
     // helper functions
@@ -139,7 +160,9 @@ module cpu_tb;
                 check_value("PC", {4'h0, pc}, {4'h0, exp_pc[k]});
             end
 
-            step; step;              // back to IDLE before the next pulse
+            step;                    // back in IDLE
+            check_value("PC after", {4'h0, pc}, {4'h0, exp_pc_after[k]});
+            step;
         end
 
         $display("");
