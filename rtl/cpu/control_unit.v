@@ -2,13 +2,16 @@ module control_unit(
     input wire clk,
     input wire rst_n,
     input wire cpu_en,
+    input wire [15:0] ir,
 
     output reg [3:0] state,
     output reg mem_addr_sel,
     output reg ir_hi_ld,
     output reg ir_lo_ld,
-    output reg pc_sel
+    output reg [2:0] pc_sel
 );
+
+    `include "cpu_defs.vh"
 
     localparam IDLE =    4'b0000;
     localparam FETCH1 =  4'b0001;
@@ -16,24 +19,31 @@ module control_unit(
     localparam FETCH3 =  4'b0011;
     localparam EXECUTE = 4'b0100;
 
+    wire [3:0] op = ir[15:12];
+
     always @(*) begin
         mem_addr_sel = 1'b0;
         ir_hi_ld =     1'b0;
         ir_lo_ld =     1'b0;
-        pc_sel =      1'b0;
+        pc_sel =       PC_HOLD;
 
         case (state)
             IDLE: ;                          // no control signals asserted, default values are already set
-            FETCH1: ;                        // no control signals asserted, default values are already set           end
+            FETCH1: ;                        // no control signals asserted, default values are already set
             FETCH2: begin
                 mem_addr_sel = 1'b1;
                 ir_hi_ld =     1'b1;
             end
             FETCH3: begin
                 ir_lo_ld =     1'b1;
-                pc_sel =      1'b1;
+                pc_sel =       PC_PLUS2;
             end
-            EXECUTE: ;                      // no control signals asserted, default values are already set
+            EXECUTE: begin
+                case (op)
+                    4'h1:    pc_sel = PC_NNN;        // set to NNN code
+                    default: pc_sel = PC_HOLD;
+                endcase
+            end
         endcase
     end
 

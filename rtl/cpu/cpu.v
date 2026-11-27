@@ -10,10 +10,13 @@ module cpu(
     output wire [3:0]  state                     // for debugging purposes only
 );
 
+    `include "cpu_defs.vh"
+
     wire mem_addr_sel;
     wire ir_hi_ld;
     wire ir_lo_ld;
-    wire pc_sel;
+    wire [2:0] pc_sel;
+    reg [11:0] pc_next;
 
     control_unit cu (
         .clk(clk),
@@ -23,19 +26,30 @@ module cpu(
         .mem_addr_sel(mem_addr_sel),
         .ir_hi_ld(ir_hi_ld),
         .ir_lo_ld(ir_lo_ld),
-        .pc_sel(pc_sel)
+        .pc_sel(pc_sel),
+        .ir(ir)
     );
 
     assign mem_addr = (mem_addr_sel) ? pc + 12'd1 : pc;
+
+    always @(*) begin
+        case (pc_sel)
+            PC_HOLD:  pc_next = pc;
+            PC_PLUS2: pc_next = pc + 12'd2;
+            PC_NNN:   pc_next = ir[11:0];
+            // PC_NNNV:  pc_next =
+            // PC_STACK: pc_next =
+            default: pc_next = pc;
+        endcase
+    end
 
     always @(posedge clk) begin
         if (!rst_n) begin
             pc <= 12'h200;                       // start of program memory NOT 0!
             ir <= 16'h0000;
         end else begin
-            if (pc_sel) begin
-                pc <= pc + 12'd2;
-            end
+            pc <= pc_next;
+
             if (ir_hi_ld) begin
                 ir[15:8] <= mem_rdata;
             end
